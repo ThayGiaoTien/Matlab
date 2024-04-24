@@ -7,7 +7,7 @@ format long;
 sin_chinhxac= sin(x);
 sin_taylor=0;
 i=0;
-saiso= sin_chinhxac;
+saiso= abs(sin_chinhxac);
 while saiso>1e-5
     sin_taylor= sin_taylor+((-1)^i)*(x^(2*i+1))/(factorial(2*i+1));
     saiso = abs(sin_chinhxac- sin_taylor);
