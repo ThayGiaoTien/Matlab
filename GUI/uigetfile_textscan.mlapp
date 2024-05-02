@@ -1,0 +1,115 @@
+classdef uigetfile_textscan < matlab.apps.AppBase
+
+    % Properties that correspond to app components
+    properties (Access = public)
+        UIFigure                matlab.ui.Figure
+        ContentTextArea         matlab.ui.control.TextArea
+        ContentTextAreaLabel    matlab.ui.control.Label
+        DirectoryTextArea       matlab.ui.control.TextArea
+        DirectoryTextAreaLabel  matlab.ui.control.Label
+        OpenButton              matlab.ui.control.Button
+    end
+
+    % Callbacks that handle component events
+    methods (Access = private)
+
+        % Button pushed function: OpenButton
+        function OpenButtonPushed(app, event)
+            % Open uigetfile to choose file
+            [type, dir]= uigetfile('*.txt', 'Chose a text file');
+            fulldir= strcat(dir, type);
+            app.DirectoryTextArea.Value= fulldir;
+            fileID= fopen(fulldir, "r");
+            buffer= textscan(fileID, '%s \b'); % '\b' to remove space
+            fclose(fileID);
+             % Now read from buffer(Cell) to array
+            A= '';
+            [m n]= size(buffer);
+            for i=1:m
+               for j= 1:n
+                   [m1 n1]  = size(buffer{i,j});
+                   for i1= 1:m1
+                       for j1= 1:n1
+                           % Write the word to arr and add space
+                           A= [A buffer{i,j}(i1, j1) ' '];
+                       end
+                   end
+               end
+            end
+            A1= '';
+            for i=1: length(A)
+                A1= strcat(A1, A(i));
+            end
+            app.ContentTextArea.Value= A1;
+
+
+        end
+    end
+
+    % Component initialization
+    methods (Access = private)
+
+        % Create UIFigure and components
+        function createComponents(app)
+
+            % Create UIFigure and hide until all components are created
+            app.UIFigure = uifigure('Visible', 'off');
+            app.UIFigure.Position = [100 100 640 480];
+            app.UIFigure.Name = 'MATLAB App';
+
+            % Create OpenButton
+            app.OpenButton = uibutton(app.UIFigure, 'push');
+            app.OpenButton.ButtonPushedFcn = createCallbackFcn(app, @OpenButtonPushed, true);
+            app.OpenButton.Position = [106 356 100 23];
+            app.OpenButton.Text = 'Open';
+
+            % Create DirectoryTextAreaLabel
+            app.DirectoryTextAreaLabel = uilabel(app.UIFigure);
+            app.DirectoryTextAreaLabel.HorizontalAlignment = 'right';
+            app.DirectoryTextAreaLabel.Position = [278 373 54 22];
+            app.DirectoryTextAreaLabel.Text = 'Directory';
+
+            % Create DirectoryTextArea
+            app.DirectoryTextArea = uitextarea(app.UIFigure);
+            app.DirectoryTextArea.Position = [347 337 150 60];
+
+            % Create ContentTextAreaLabel
+            app.ContentTextAreaLabel = uilabel(app.UIFigure);
+            app.ContentTextAreaLabel.HorizontalAlignment = 'right';
+            app.ContentTextAreaLabel.Position = [121 262 47 22];
+            app.ContentTextAreaLabel.Text = 'Content';
+
+            % Create ContentTextArea
+            app.ContentTextArea = uitextarea(app.UIFigure);
+            app.ContentTextArea.Position = [183 57 397 229];
+
+            % Show the figure after all components are created
+            app.UIFigure.Visible = 'on';
+        end
+    end
+
+    % App creation and deletion
+    methods (Access = public)
+
+        % Construct app
+        function app = uigetfile_textscan
+
+            % Create UIFigure and components
+            createComponents(app)
+
+            % Register the app with App Designer
+            registerApp(app, app.UIFigure)
+
+            if nargout == 0
+                clear app
+            end
+        end
+
+        % Code that executes before app deletion
+        function delete(app)
+
+            % Delete UIFigure when app is deleted
+            delete(app.UIFigure)
+        end
+    end
+end
