@@ -1,0 +1,23 @@
+- Declare 2 global vars:
+jj= 0; (jj = user input. when turn on or reset, jj=0).
+shift =0; (shift =1: Use atan, log10, asin, acos fucn)
+Set '0.' to the text. 
+- Button 0-9
+ Get string from text field. 
+Compare with defautl string '0.' and check flag jj ==0 then set string to '1'.
+Otherwise, string != '0.' or jj= 1, just concatenate '1' to text string( even when text string is '0.' but jj=1).
+jj =1 when user actually want to input '0.' 
+- Button +/- : using strread to change the sign of float number
+a= strread(textString, '%f')
+- Button .: If string is '0.', set jj flag to 1. 
+Do the same things with other operator buttons.
+
+- Back button: clear the last char.
+- Shift button: Set shift flag to 1.
+- '=' button: using eval() function - execute string containing math expression. 
+ans= eval(textString).
+
+
+
+
+
